@@ -4,8 +4,5 @@ FactoryBot.define do
     association :invoice, factory: :invoice
     sequence(:quantity) { |n| n*5 }
     sequence(:unit_price) { |n| n }
-
-    status { "shipped" }
-
   end
 end
