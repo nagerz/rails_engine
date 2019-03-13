@@ -41,5 +41,4 @@ class Merchant < ApplicationRecord
     date_revenues.sum(&:date_revenue)
   end
 
-
 end
