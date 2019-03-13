@@ -232,9 +232,9 @@ describe "Merchants API" do
       merchants = JSON.parse(response.body)
 
       expect(merchants.count).to eq(3)
-      expect(merchants[0]).to eq(merchant4)
-      expect(merchants[1]).to eq(merchant2)
-      expect(merchants[2]).to eq(merchant1)
+      expect(merchants[0]["name"]).to eq(merchant4.name)
+      expect(merchants[1]["name"]).to eq(merchant2.name)
+      expect(merchants[2]["name"]).to eq(merchant1.name)
     end
   end
 

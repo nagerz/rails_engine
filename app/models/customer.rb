@@ -1,4 +1,9 @@
 class Customer < ApplicationRecord
-  has_many :invoices, foreign_key: 'customer_id'
-  
+  has_many :invoices
+  has_many :invoice_items, through: :invoices
+  has_many :transactions, through: :invoices
+
+  validates_presence_of :first_name
+  validates_presence_of :last_name
+
 end
