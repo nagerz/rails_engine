@@ -6,4 +6,6 @@ class Invoice < ApplicationRecord
   has_many :transactions
 
   validates_presence_of :status
+
+  scope :success, -> { where(result: "shipped")}
 end

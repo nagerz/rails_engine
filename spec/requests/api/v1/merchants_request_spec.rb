@@ -205,16 +205,19 @@ describe "Merchants API" do
       customer = create(:customer)
       #item = create(:item)
 
-      @merchant1 = create(:merchant)
-      @merchant2 = create(:merchant)
-      @merchant3 = create(:merchant)
-      @merchant4 = create(:merchant)
+      @m1 = create(:merchant)
+      @m2 = create(:merchant)
+      @m3 = create(:merchant)
+      @m4 = create(:merchant)
+      @m5 = create(:merchant)
 
-      invoice1 = create(:invoice, customer: customer, merchant: @merchant1)
-      invoice2 = create(:invoice, customer: customer, merchant: @merchant2)
-      invoice3 = create(:invoice, customer: customer, merchant: @merchant2)
-      invoice4 = create(:invoice, customer: customer, merchant: @merchant3)
-      invoice5 = create(:invoice, customer: customer, merchant: @merchant4)
+
+      invoice1 = create(:invoice, customer: customer, merchant: @m1)
+      invoice2 = create(:invoice, customer: customer, merchant: @m2)
+      invoice3 = create(:invoice, customer: customer, merchant: @m2)
+      invoice4 = create(:invoice, customer: customer, merchant: @m3)
+      invoice5 = create(:invoice, customer: customer, merchant: @m4)
+      invoice6 = create(:invoice, customer: customer, merchant: @m5)
 
       invoice_item1 = create(:invoice_item, invoice: invoice1, quantity: 1, unit_price: 5)
       invoice_item2 = create(:invoice_item, invoice: invoice1, quantity: 1, unit_price: 4)
@@ -222,6 +225,14 @@ describe "Merchants API" do
       invoice_item4 = create(:invoice_item, invoice: invoice3, quantity: 3, unit_price: 6)
       invoice_item5 = create(:invoice_item, invoice: invoice4, quantity: 6, unit_price: 1)
       invoice_item6 = create(:invoice_item, invoice: invoice5, quantity: 1, unit_price: 97)
+      invoice_item7 = create(:invoice_item, invoice: invoice6, quantity: 100, unit_price: 1000)
+
+      transaction1 = create(:transaction, invoice: invoice1, result: "success")
+      transaction2 = create(:transaction, invoice: invoice2, result: "success")
+      transaction3 = create(:transaction, invoice: invoice3, result: "success")
+      transaction4 = create(:transaction, invoice: invoice4, result: "success")
+      transaction5 = create(:transaction, invoice: invoice5, result: "success")
+      transaction6 = create(:transaction, invoice: invoice6, result: "failed")
     end
 
     it "sends the top merchants ranked by total revenue" do
@@ -234,11 +245,11 @@ describe "Merchants API" do
       merchants = JSON.parse(response.body)
 
       expect(merchants.count).to eq(3)
-      expect(merchants[0]["name"]).to eq(@merchant4.name)
+      expect(merchants[0]["name"]).to eq(@m4.name)
       expect(merchants[0]["total_revenue"]).to eq(97)
-      expect(merchants[1]["name"]).to eq(@merchant2.name)
+      expect(merchants[1]["name"]).to eq(@m2.name)
       expect(merchants[1]["total_revenue"]).to eq(24)
-      expect(merchants[2]["name"]).to eq(@merchant1.name)
+      expect(merchants[2]["name"]).to eq(@m1.name)
       expect(merchants[2]["total_revenue"]).to eq(9)
     end
 
@@ -252,11 +263,11 @@ describe "Merchants API" do
       merchants = JSON.parse(response.body)
 
       expect(merchants.count).to eq(3)
-      expect(merchants[0]["name"]).to eq(@merchant3.name)
+      expect(merchants[0]["name"]).to eq(@m3.name)
       expect(merchants[0]["items_sold"]).to eq(6)
-      expect(merchants[1]["name"]).to eq(@merchant2.name)
+      expect(merchants[1]["name"]).to eq(@m2.name)
       expect(merchants[1]["items_sold"]).to eq(5)
-      expect(merchants[2]["name"]).to eq(@merchant1.name)
+      expect(merchants[2]["name"]).to eq(@m1.name)
       expect(merchants[2]["items_sold"]).to eq(2)
     end
   end
