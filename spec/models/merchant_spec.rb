@@ -32,7 +32,7 @@ RSpec.describe Merchant, type: :model do
       invoice_item2 = create(:invoice_item, invoice: invoice1, quantity: 1, unit_price: 4)
       invoice_item3 = create(:invoice_item, invoice: invoice2, quantity: 2, unit_price: 3)
       invoice_item4 = create(:invoice_item, invoice: invoice3, quantity: 3, unit_price: 6)
-      invoice_item5 = create(:invoice_item, invoice: invoice4, quantity: 1, unit_price: 2)
+      invoice_item5 = create(:invoice_item, invoice: invoice4, quantity: 6, unit_price: 1)
       invoice_item6 = create(:invoice_item, invoice: invoice5, quantity: 1, unit_price: 97)
     end
 
@@ -40,8 +40,16 @@ RSpec.describe Merchant, type: :model do
       expect(Merchant.merchants_sorted_by_revenue).to eq([@m4, @m2, @m1, @m3])
     end
 
+    it ".merchants_sorted_by_items_sold" do
+      expect(Merchant.merchants_sorted_by_items).to eq([@m3, @m2, @m1, @m4])
+    end
+
     it ".top_merchants_by_revenue()" do
       expect(Merchant.top_merchants_by_revenue(3)).to eq([@m4, @m2, @m1])
+    end
+
+    it ".top_merchants_by_items_sold()" do
+      expect(Merchant.top_merchants_by_items(3)).to eq([@m3, @m2, @m1])
     end
   end
 
