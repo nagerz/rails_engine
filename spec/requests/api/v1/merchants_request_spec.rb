@@ -202,8 +202,11 @@ describe "Merchants API" do
 
   context "Business Intelligence Endpoints" do
     before :each do
+      date_one = "2012-03-25 09:54:09 UTC"
+      date_two = "2012-03-07 09:54:09 UTC"
+      date_today = Date.today.to_s
+
       customer = create(:customer)
-      #item = create(:item)
 
       @m1 = create(:merchant)
       @m2 = create(:merchant)
@@ -211,13 +214,12 @@ describe "Merchants API" do
       @m4 = create(:merchant)
       @m5 = create(:merchant)
 
-
-      invoice1 = create(:invoice, customer: customer, merchant: @m1)
-      invoice2 = create(:invoice, customer: customer, merchant: @m2)
-      invoice3 = create(:invoice, customer: customer, merchant: @m2)
-      invoice4 = create(:invoice, customer: customer, merchant: @m3)
-      invoice5 = create(:invoice, customer: customer, merchant: @m4)
-      invoice6 = create(:invoice, customer: customer, merchant: @m5)
+      invoice1 = create(:invoice, customer: customer, merchant: @m1, updated_at: date_one)
+      invoice2 = create(:invoice, customer: customer, merchant: @m2, updated_at: date_two)
+      invoice3 = create(:invoice, customer: customer, merchant: @m2, updated_at: date_one)
+      invoice4 = create(:invoice, customer: customer, merchant: @m3, updated_at: date_one)
+      invoice5 = create(:invoice, customer: customer, merchant: @m4, updated_at: date_today)
+      invoice6 = create(:invoice, customer: customer, merchant: @m5, updated_at: date_one)
 
       invoice_item1 = create(:invoice_item, invoice: invoice1, quantity: 1, unit_price: 5)
       invoice_item2 = create(:invoice_item, invoice: invoice1, quantity: 1, unit_price: 4)
@@ -227,12 +229,12 @@ describe "Merchants API" do
       invoice_item6 = create(:invoice_item, invoice: invoice5, quantity: 1, unit_price: 97)
       invoice_item7 = create(:invoice_item, invoice: invoice6, quantity: 100, unit_price: 1000)
 
-      transaction1 = create(:transaction, invoice: invoice1, result: "success")
-      transaction2 = create(:transaction, invoice: invoice2, result: "success")
-      transaction3 = create(:transaction, invoice: invoice3, result: "success")
-      transaction4 = create(:transaction, invoice: invoice4, result: "success")
-      transaction5 = create(:transaction, invoice: invoice5, result: "success")
-      transaction6 = create(:transaction, invoice: invoice6, result: "failed")
+      transaction1 = create(:transaction, invoice: invoice1, result: "success", updated_at: date_one)
+      transaction2 = create(:transaction, invoice: invoice2, result: "success", updated_at: date_two)
+      transaction3 = create(:transaction, invoice: invoice3, result: "success", updated_at: date_one)
+      transaction4 = create(:transaction, invoice: invoice4, result: "success", updated_at: date_one)
+      transaction5 = create(:transaction, invoice: invoice5, result: "success", updated_at: date_today)
+      transaction6 = create(:transaction, invoice: invoice6, result: "failed", updated_at: date_one)
     end
 
     it "sends the top merchants ranked by total revenue" do
@@ -253,6 +255,24 @@ describe "Merchants API" do
       expect(merchants[2]["total_revenue"]).to eq(9)
     end
 
+    it "sends the top merchants ranked by total revenue (no quantity provided)" do
+      get "/api/v1/merchants/most_revenue"
+
+      expect(response).to be_successful
+
+      merchants = JSON.parse(response.body)
+
+      expect(merchants.count).to eq(4)
+      expect(merchants[0]["name"]).to eq(@m4.name)
+      expect(merchants[0]["total_revenue"]).to eq(97)
+      expect(merchants[1]["name"]).to eq(@m2.name)
+      expect(merchants[1]["total_revenue"]).to eq(24)
+      expect(merchants[2]["name"]).to eq(@m1.name)
+      expect(merchants[2]["total_revenue"]).to eq(9)
+      expect(merchants[3]["name"]).to eq(@m3.name)
+      expect(merchants[3]["total_revenue"]).to eq(6)
+    end
+
     it "sends the top merchants ranked by items sold" do
       x = 3
 
@@ -269,6 +289,48 @@ describe "Merchants API" do
       expect(merchants[1]["items_sold"]).to eq(5)
       expect(merchants[2]["name"]).to eq(@m1.name)
       expect(merchants[2]["items_sold"]).to eq(2)
+    end
+
+    it "sends the top merchants ranked by items sold (no quantity provided)" do
+      get "/api/v1/merchants/most_items"
+
+      expect(response).to be_successful
+
+      merchants = JSON.parse(response.body)
+
+      expect(merchants.count).to eq(4)
+      expect(merchants[0]["name"]).to eq(@m3.name)
+      expect(merchants[0]["items_sold"]).to eq(6)
+      expect(merchants[1]["name"]).to eq(@m2.name)
+      expect(merchants[1]["items_sold"]).to eq(5)
+      expect(merchants[2]["name"]).to eq(@m1.name)
+      expect(merchants[2]["items_sold"]).to eq(2)
+      expect(merchants[3]["name"]).to eq(@m4.name)
+      expect(merchants[3]["items_sold"]).to eq(1)
+    end
+
+    it "sends the total revenue for a date" do
+      date_one = "2012-03-25"
+
+      get "/api/v1/merchants/revenue?date=#{date_one}"
+
+      expect(response).to be_successful
+
+      revenue = JSON.parse(response.body)
+
+      expect(revenue).to eq(33)
+    end
+
+    it "sends the total revenue for a date (no date provided)" do
+      date_today = Date.today.to_s
+
+      get "/api/v1/merchants/revenue?date=#{date_today}"
+
+      expect(response).to be_successful
+
+      revenue = JSON.parse(response.body)
+
+      expect(revenue).to eq(97)
     end
   end
 

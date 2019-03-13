@@ -14,8 +14,10 @@ RSpec.describe Merchant, type: :model do
 
   describe 'class methods' do
     before :each do
+      date_one = "2012-03-25 09:54:09 UTC"
+      date_two = "2012-03-07 09:54:09 UTC"
+
       customer = create(:customer)
-      #item = create(:item)
 
       @m1 = create(:merchant)
       @m2 = create(:merchant)
@@ -23,12 +25,12 @@ RSpec.describe Merchant, type: :model do
       @m4 = create(:merchant)
       @m5 = create(:merchant)
 
-      invoice1 = create(:invoice, customer: customer, merchant: @m1)
-      invoice2 = create(:invoice, customer: customer, merchant: @m2)
-      invoice3 = create(:invoice, customer: customer, merchant: @m2)
-      invoice4 = create(:invoice, customer: customer, merchant: @m3)
-      invoice5 = create(:invoice, customer: customer, merchant: @m4)
-      invoice6 = create(:invoice, customer: customer, merchant: @m5)
+      invoice1 = create(:invoice, customer: customer, merchant: @m1, updated_at: date_one)
+      invoice2 = create(:invoice, customer: customer, merchant: @m2, updated_at: date_two)
+      invoice3 = create(:invoice, customer: customer, merchant: @m2, updated_at: date_one)
+      invoice4 = create(:invoice, customer: customer, merchant: @m3, updated_at: date_one)
+      invoice5 = create(:invoice, customer: customer, merchant: @m4, updated_at: date_two)
+      invoice6 = create(:invoice, customer: customer, merchant: @m5, updated_at: date_one)
 
       invoice_item1 = create(:invoice_item, invoice: invoice1, quantity: 1, unit_price: 5)
       invoice_item2 = create(:invoice_item, invoice: invoice1, quantity: 1, unit_price: 4)
@@ -60,6 +62,12 @@ RSpec.describe Merchant, type: :model do
 
     it ".top_merchants_by_items_sold()" do
       expect(Merchant.top_merchants_by_items(3)).to eq([@m3, @m2, @m1])
+    end
+
+    it ".merchants_total_revenue_date()" do
+      date_one = "2012-03-25"
+
+      expect(Merchant.merchants_total_revenue_date(date_one)).to eq(33)
     end
   end
 

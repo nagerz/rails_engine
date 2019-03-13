@@ -6,11 +6,11 @@ class Merchant < ApplicationRecord
 
   validates_presence_of :name
 
-  def self.top_merchants_by_revenue(limit)
+  def self.top_merchants_by_revenue(limit = 10)
     merchants_sorted_by_revenue.limit(limit)
   end
 
-  def self.top_merchants_by_items(limit)
+  def self.top_merchants_by_items(limit = 10)
     merchants_sorted_by_items.limit(limit)
   end
 
@@ -31,4 +31,15 @@ class Merchant < ApplicationRecord
     .group(:id)
     .order("items_sold desc")
   end
+
+  def self.merchants_total_revenue_date(date = Date.today)
+    date_revenues = self.select("sum(invoice_items.quantity * invoice_items.unit_price) date_revenue")
+                        .joins(invoices: [:invoice_items, :transactions])
+                        .merge(Transaction.successful)
+                        .where("DATE(invoices.updated_at) = ?", date.to_date)
+                        .group(:id)
+    date_revenues.sum(&:date_revenue)
+  end
+
+
 end
