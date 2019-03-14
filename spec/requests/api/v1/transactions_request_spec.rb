@@ -9,7 +9,7 @@ describe "Transactions API" do
 
       expect(response).to be_successful
 
-      transactions = JSON.parse(response.body)
+      transactions = JSON.parse(response.body)["data"]
 
       expect(transactions.count).to eq(3)
     end
@@ -19,10 +19,10 @@ describe "Transactions API" do
 
       get "/api/v1/transactions/#{id}"
 
-      transaction = JSON.parse(response.body)
+      transaction = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(transaction["id"]).to eq(id)
+      expect(transaction["id"].to_i).to eq(id)
     end
 
     it "can find one transaction by its id" do
