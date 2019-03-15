@@ -187,10 +187,10 @@ describe "Invoices API" do
 
       expect(response).to be_successful
 
-      invoice_items = JSON.parse(response.body)
+      invoice_items = JSON.parse(response.body)["data"]
 
       expect(invoice_items.count).to eq(2)
-      expect(invoice_items.first["id"]).to eq(i_id)
+      expect(invoice_items.first["id"].to_i).to eq(i_id)
     end
 
     it "sends a list of items associated with a invoice" do
@@ -210,10 +210,10 @@ describe "Invoices API" do
 
       expect(response).to be_successful
 
-      items = JSON.parse(response.body)
+      items = JSON.parse(response.body)["data"]
 
       expect(items.count).to eq(2)
-      expect(items.first["id"]).to eq(i_id)
+      expect(items.first["id"].to_i).to eq(i_id)
     end
 
     it "sends a list of transactions associated with a invoice" do
@@ -231,7 +231,7 @@ describe "Invoices API" do
 
       expect(response).to be_successful
 
-      transactions = JSON.parse(response.body)
+      transactions = JSON.parse(response.body)["data"]
 
       expect(transactions.count).to eq(2)
       expect(transactions.first["id"].to_i).to eq(t_id1)
@@ -250,7 +250,7 @@ describe "Invoices API" do
 
       expect(response).to be_successful
 
-      merchant = JSON.parse(response.body)
+      merchant = JSON.parse(response.body)["data"]
 
       expect(merchant["id"].to_i).to eq(mid)
     end
@@ -267,7 +267,7 @@ describe "Invoices API" do
 
       expect(response).to be_successful
 
-      customer = JSON.parse(response.body)
+      customer = JSON.parse(response.body)["data"]
 
       expect(customer["id"].to_i).to eq(cid)
     end

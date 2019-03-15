@@ -182,7 +182,7 @@ describe "Merchants API" do
 
       expect(response).to be_successful
 
-      items = JSON.parse(response.body)
+      items = JSON.parse(response.body)["data"]
 
       expect(items.count).to eq(5)
     end
@@ -200,7 +200,7 @@ describe "Merchants API" do
 
       expect(response).to be_successful
 
-      items = JSON.parse(response.body)
+      items = JSON.parse(response.body)["data"]
 
       expect(items.count).to eq(5)
     end

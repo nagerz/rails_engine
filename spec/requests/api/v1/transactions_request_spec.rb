@@ -210,9 +210,9 @@ describe "Transactions API" do
 
       expect(response).to be_successful
 
-      invoice = JSON.parse(response.body)
+      invoice = JSON.parse(response.body)["data"]
 
-      expect(invoice["id"]).to eq(i_id)
+      expect(invoice["id"].to_i).to eq(i_id)
     end
   end
 

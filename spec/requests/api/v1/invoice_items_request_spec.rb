@@ -198,9 +198,9 @@ describe "Invoice_items API" do
 
       expect(response).to be_successful
 
-      invoice = JSON.parse(response.body)
+      invoice = JSON.parse(response.body)["data"]
 
-      expect(invoice["id"]).to eq(i_id)
+      expect(invoice["id"].to_i).to eq(i_id)
     end
 
     it "sends the item associated with a invoice_item" do
@@ -216,9 +216,9 @@ describe "Invoice_items API" do
 
       expect(response).to be_successful
 
-      item = JSON.parse(response.body)
+      item = JSON.parse(response.body)["data"]
 
-      expect(item["id"]).to eq(i_id)
+      expect(item["id"].to_i).to eq(i_id)
     end
   end
 

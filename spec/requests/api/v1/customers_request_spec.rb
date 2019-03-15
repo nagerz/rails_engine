@@ -211,7 +211,7 @@ describe "Customers API" do
 
       expect(response).to be_successful
 
-      invoices = JSON.parse(response.body)
+      invoices = JSON.parse(response.body)["data"]
 
       expect(invoices.count).to eq(5)
     end
@@ -235,7 +235,7 @@ describe "Customers API" do
 
       expect(response).to be_successful
 
-      transactions = JSON.parse(response.body)
+      transactions = JSON.parse(response.body)["data"]
 
       expect(transactions.count).to eq(3)
     end

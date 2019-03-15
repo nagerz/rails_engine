@@ -228,7 +228,7 @@ describe "Items API" do
 
       expect(response).to be_successful
 
-      invoice_items = JSON.parse(response.body)
+      invoice_items = JSON.parse(response.body)["data"]
 
       expect(invoice_items.count).to eq(2)
     end
@@ -245,9 +245,9 @@ describe "Items API" do
 
       expect(response).to be_successful
 
-      merchant = JSON.parse(response.body)
+      merchant = JSON.parse(response.body)["data"]
 
-      expect(merchant["id"]).to eq(mid)
+      expect(merchant["id"].to_i).to eq(mid)
     end
   end
 
