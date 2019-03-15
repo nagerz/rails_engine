@@ -78,6 +78,13 @@ RSpec.describe Merchant, type: :model do
 
       expect(Merchant.merchant_total_revenue(id)).to eq(2400)
     end
+
+    it ".merchant_total_revenue(with date)" do
+      id = @m2.id
+      date = "2012-03-25"
+
+      expect(Merchant.merchant_total_revenue(id, date)).to eq(1800)
+    end
   end
 
 end

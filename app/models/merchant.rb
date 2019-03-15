@@ -43,7 +43,14 @@ class Merchant < ApplicationRecord
 
   def self.merchant_total_revenue(id, date = nil)
     if date
-      5
+      select("sum(invoice_items.quantity * invoice_items.unit_price) revenue")
+      .joins(invoices: [:invoice_items, :transactions])
+      .merge(Transaction.successful)
+      .where(id: id)
+      .where("DATE(invoices.updated_at) = ?", date.to_date)
+      .group(:id)
+      .first
+      .revenue
     else
       select("sum(invoice_items.quantity * invoice_items.unit_price) revenue")
       .joins(invoices: [:invoice_items, :transactions])
