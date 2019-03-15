@@ -41,4 +41,12 @@ class Merchant < ApplicationRecord
     date_revenues.sum(&:date_revenue)
   end
 
+  def self.merchant_total_revenue(id, date)
+    if date
+      5
+    else
+      id
+    end
+  end
+
 end
