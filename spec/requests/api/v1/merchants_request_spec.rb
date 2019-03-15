@@ -339,7 +339,7 @@ describe "Merchants API" do
 
         invoice1 = create(:invoice, customer: customer, merchant: @m1, updated_at: date_one)
         invoice2 = create(:invoice, customer: customer, merchant: @m1, updated_at: date_one)
-        invoice3 = create(:invoice, customer: customer, merchant: @m1, updated_at: date_one)
+        invoice3 = create(:invoice, customer: customer, merchant: @m1, updated_at: date_two)
 
         invoice4 = create(:invoice, customer: customer, merchant: @m2, updated_at: date_one)
         invoice5 = create(:invoice, customer: customer, merchant: @m1, updated_at: date_one)
@@ -372,18 +372,19 @@ describe "Merchants API" do
 
         expect(revenue).to eq("38.00")
       end
-      #
-      # it "sends the total revenue for a merchant for a specific invoice date" do
-      #   date_one = "2012-03-25"
-      #
-      #   get "/api/v1/merchants/revenue?date=#{date_one}"
-      #
-      #   expect(response).to be_successful
-      #
-      #   revenue = JSON.parse(response.body)["data"]["attributes"]["total_revenue"]
-      #
-      #   expect(revenue).to eq("33.00")
-      # end
+
+      it "sends the total revenue for a merchant for a specific invoice date" do
+        id = @m1.id
+        date_one = "2012-03-25"
+
+        get "/api/v1/merchants/#{id}/revenue?date=#{date_one}"
+
+        expect(response).to be_successful
+
+        revenue = JSON.parse(response.body)["data"]["attributes"]["revenue"]
+
+        expect(revenue).to eq("20.00")
+      end
       # it "sends the customer who has conducted the most total number of successful transactions" do
       # end
       # it "sends a collection of customers which have pending (unpaid) invoices" do
