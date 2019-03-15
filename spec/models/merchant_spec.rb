@@ -31,14 +31,16 @@ RSpec.describe Merchant, type: :model do
       invoice4 = create(:invoice, customer: customer, merchant: @m3, updated_at: date_one)
       invoice5 = create(:invoice, customer: customer, merchant: @m4, updated_at: date_two)
       invoice6 = create(:invoice, customer: customer, merchant: @m5, updated_at: date_one)
+      invoice7 = create(:invoice, customer: customer, merchant: @m2, updated_at: date_one)
 
-      invoice_item1 = create(:invoice_item, invoice: invoice1, quantity: 1, unit_price: 5)
-      invoice_item2 = create(:invoice_item, invoice: invoice1, quantity: 1, unit_price: 4)
-      invoice_item3 = create(:invoice_item, invoice: invoice2, quantity: 2, unit_price: 3)
-      invoice_item4 = create(:invoice_item, invoice: invoice3, quantity: 3, unit_price: 6)
-      invoice_item5 = create(:invoice_item, invoice: invoice4, quantity: 6, unit_price: 1)
-      invoice_item6 = create(:invoice_item, invoice: invoice5, quantity: 1, unit_price: 97)
-      invoice_item7 = create(:invoice_item, invoice: invoice6, quantity: 100, unit_price: 1000)
+      invoice_item1 = create(:invoice_item, invoice: invoice1, quantity: 1, unit_price: 500)
+      invoice_item2 = create(:invoice_item, invoice: invoice1, quantity: 1, unit_price: 400)
+      invoice_item3 = create(:invoice_item, invoice: invoice2, quantity: 2, unit_price: 300)
+      invoice_item4 = create(:invoice_item, invoice: invoice3, quantity: 3, unit_price: 600)
+      invoice_item5 = create(:invoice_item, invoice: invoice4, quantity: 6, unit_price: 100)
+      invoice_item6 = create(:invoice_item, invoice: invoice5, quantity: 1, unit_price: 9700)
+      invoice_item7 = create(:invoice_item, invoice: invoice6, quantity: 100, unit_price: 100000)
+      invoice_item8 = create(:invoice_item, invoice: invoice7, quantity: 100, unit_price: 100000)
 
       transaction1 = create(:transaction, invoice: invoice1, result: "success")
       transaction2 = create(:transaction, invoice: invoice2, result: "success")
@@ -46,6 +48,7 @@ RSpec.describe Merchant, type: :model do
       transaction4 = create(:transaction, invoice: invoice4, result: "success")
       transaction5 = create(:transaction, invoice: invoice5, result: "success")
       transaction6 = create(:transaction, invoice: invoice6, result: "failed")
+      transaction7 = create(:transaction, invoice: invoice7, result: "failed")
     end
 
     it ".merchants_sorted_by_revenue" do
@@ -67,7 +70,13 @@ RSpec.describe Merchant, type: :model do
     it ".merchants_total_revenue_date()" do
       date_one = "2012-03-25"
 
-      expect(Merchant.merchants_total_revenue_date(date_one)).to eq(33)
+      expect(Merchant.merchants_total_revenue_date(date_one)).to eq(3300)
+    end
+
+    it ".merchant_total_revenue" do
+      id = @m2.id
+
+      expect(Merchant.merchant_total_revenue(id)).to eq(2400)
     end
   end
 

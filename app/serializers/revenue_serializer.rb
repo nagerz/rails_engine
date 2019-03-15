@@ -5,4 +5,8 @@ class RevenueSerializer
     "%.2f" % (object.revenue/100.to_f)
   end
 
+  attribute :revenue do |object|
+    "%.2f" % (object.revenue/100.to_f)
+  end
+
 end

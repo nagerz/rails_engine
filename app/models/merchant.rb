@@ -41,11 +41,17 @@ class Merchant < ApplicationRecord
     date_revenues.sum(&:date_revenue)
   end
 
-  def self.merchant_total_revenue(id, date)
+  def self.merchant_total_revenue(id, date = nil)
     if date
       5
     else
-      id
+      select("sum(invoice_items.quantity * invoice_items.unit_price) revenue")
+      .joins(invoices: [:invoice_items, :transactions])
+      .merge(Transaction.successful)
+      .where(id: id)
+      .group(:id)
+      .first
+      .revenue
     end
   end
 
