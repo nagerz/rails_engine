@@ -31,10 +31,10 @@ describe "Customers API" do
 
       get "/api/v1/customers/find?id=#{id}"
 
-      customer = JSON.parse(response.body)
+      customer = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(customer["id"]).to eq(id)
+      expect(customer["id"].to_i).to eq(id)
     end
 
     it "can find one customer by its first name" do
@@ -43,10 +43,10 @@ describe "Customers API" do
 
       get "/api/v1/customers/find?first_name=#{name}"
 
-      customer = JSON.parse(response.body)
+      customer = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(customer["first_name"]).to eq(name)
+      expect(customer["attributes"]["first_name"]).to eq(name)
     end
 
     it "can find one customer by its last name" do
@@ -55,36 +55,38 @@ describe "Customers API" do
 
       get "/api/v1/customers/find?last_name=#{name}"
 
-      customer = JSON.parse(response.body)
+      customer = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(customer["last_name"]).to eq(name)
+      expect(customer["attributes"]["last_name"]).to eq(name)
     end
 
     it "can find one customer by its created time" do
       create(:customer, created_at: "2012-03-27 14:53:59 UTC")
       create(:customer, created_at: "2012-04-27 14:53:59 UTC")
       created_at = Customer.second.created_at
+      id = Customer.second.id
 
       get "/api/v1/customers/find?created_at=#{created_at}"
 
-      customer = JSON.parse(response.body)
+      customer = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(customer["created_at"]).to eq("2012-04-27T14:53:59.000Z")
+      expect(customer["id"].to_i).to eq(id)
     end
 
     it "can find one customer by its updated time" do
       create(:customer, updated_at: "2012-03-27 14:53:59 UTC")
       create(:customer, updated_at: "2012-04-27 14:53:59 UTC")
       updated_at = Customer.second.updated_at
+      id = Customer.second.id
 
       get "/api/v1/customers/find?updated_at=#{updated_at}"
 
-      customer = JSON.parse(response.body)
+      customer = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(customer["updated_at"]).to eq("2012-04-27T14:53:59.000Z")
+      expect(customer["id"].to_i).to eq(id)
     end
 
     xit "can find one customer case insensitive name" do
@@ -94,7 +96,7 @@ describe "Customers API" do
 
       get "/api/v1/customers/find?name=#{upcased_name}"
 
-      customer = JSON.parse(response.body)
+      customer = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
       expect(customer["name"]).to eq(name)
@@ -106,10 +108,10 @@ describe "Customers API" do
 
       get "/api/v1/customers/find_all?id=#{id}"
 
-      customer = JSON.parse(response.body)
+      customer = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(customer.first["id"]).to eq(id)
+      expect(customer.first["id"].to_i).to eq(id)
       expect(customer.class).to eq(Array)
     end
 
@@ -120,12 +122,12 @@ describe "Customers API" do
 
       get "/api/v1/customers/find_all?first_name=#{name}"
 
-      customer = JSON.parse(response.body)
+      customer = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
       expect(customer.count).to eq(2)
-      expect(customer.first["first_name"]).to eq(name)
-      expect(customer.second["first_name"]).to eq(name)
+      expect(customer.first["attributes"]["first_name"]).to eq(name)
+      expect(customer.second["attributes"]["first_name"]).to eq(name)
     end
 
     it "can find all customers by last name" do
@@ -135,12 +137,12 @@ describe "Customers API" do
 
       get "/api/v1/customers/find_all?last_name=#{name}"
 
-      customer = JSON.parse(response.body)
+      customer = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
       expect(customer.count).to eq(2)
-      expect(customer.first["last_name"]).to eq(name)
-      expect(customer.second["last_name"]).to eq(name)
+      expect(customer.first["attributes"]["last_name"]).to eq(name)
+      expect(customer.second["attributes"]["last_name"]).to eq(name)
     end
 
     it "can find all customers by created time" do
@@ -148,15 +150,17 @@ describe "Customers API" do
       create(:customer, created_at: "2012-04-27 14:53:59 UTC")
       create(:customer, created_at: "2012-03-27 14:53:59 UTC")
       created_at = Customer.first.created_at
+      id1 = Customer.first.id
+      id3 = Customer.third.id
 
       get "/api/v1/customers/find_all?created_at=#{created_at}"
 
-      customer = JSON.parse(response.body)
+      customer = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
       expect(customer.count).to eq(2)
-      expect(customer.first["created_at"]).to eq("2012-03-27T14:53:59.000Z")
-      expect(customer.second["created_at"]).to eq("2012-03-27T14:53:59.000Z")
+      expect(customer.first["id"].to_i).to eq(id1)
+      expect(customer.second["id"].to_i).to eq(id3)
     end
 
     it "can find all customers by updated time" do
@@ -164,15 +168,17 @@ describe "Customers API" do
       create(:customer, updated_at: "2012-05-27 14:53:59 UTC")
       create(:customer, updated_at: "2012-04-27 14:53:59 UTC")
       updated_at = Customer.first.updated_at
+      id1 = Customer.first.id
+      id3 = Customer.third.id
 
       get "/api/v1/customers/find_all?updated_at=#{updated_at}"
 
-      customer = JSON.parse(response.body)
+      customer = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
       expect(customer.count).to eq(2)
-      expect(customer.first["updated_at"]).to eq("2012-04-27T14:53:59.000Z")
-      expect(customer.second["updated_at"]).to eq("2012-04-27T14:53:59.000Z")
+      expect(customer.first["id"].to_i).to eq(id1)
+      expect(customer.second["id"].to_i).to eq(id3)
     end
 
     it "can get one customer at random" do
@@ -184,10 +190,10 @@ describe "Customers API" do
 
       get "/api/v1/customers/random"
 
-      customer = JSON.parse(response.body)
+      customer = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(ids).to include(customer["id"])
+      expect(ids).to include(customer["id"].to_i)
     end
   end
 

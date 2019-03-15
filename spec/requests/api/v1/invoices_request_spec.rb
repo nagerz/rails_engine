@@ -31,10 +31,10 @@ describe "Invoices API" do
 
       get "/api/v1/invoices/find?id=#{id}"
 
-      invoice = JSON.parse(response.body)
+      invoice = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(invoice["id"]).to eq(id)
+      expect(invoice["id"].to_i).to eq(id)
     end
 
     it "can find one invoice by its status" do
@@ -43,36 +43,38 @@ describe "Invoices API" do
 
       get "/api/v1/invoices/find?status=#{status}"
 
-      invoice = JSON.parse(response.body)
+      invoice = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(invoice["status"]).to eq(status)
+      expect(invoice["attributes"]["status"]).to eq(status)
     end
 
     it "can find one invoice by its created time" do
       create(:invoice, created_at: "2012-03-27 14:53:59 UTC")
       create(:invoice, created_at: "2012-04-27 14:53:59 UTC")
       created_at = Invoice.second.created_at
+      id = Invoice.second.id
 
       get "/api/v1/invoices/find?created_at=#{created_at}"
 
-      invoice = JSON.parse(response.body)
+      invoice = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(invoice["created_at"]).to eq("2012-04-27T14:53:59.000Z")
+      expect(invoice["id"].to_i).to eq(id)
     end
 
     it "can find one invoice by its updated time" do
       create(:invoice, updated_at: "2012-03-27 14:53:59 UTC")
       create(:invoice, updated_at: "2012-04-27 14:53:59 UTC")
       updated_at = Invoice.second.updated_at
+      id = Invoice.second.id
 
       get "/api/v1/invoices/find?updated_at=#{updated_at}"
 
-      invoice = JSON.parse(response.body)
+      invoice = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(invoice["updated_at"]).to eq("2012-04-27T14:53:59.000Z")
+      expect(invoice["id"].to_i).to eq(id)
     end
 
     xit "can find one invoice case insensitive status" do
@@ -82,10 +84,10 @@ describe "Invoices API" do
 
       get "/api/v1/invoices/find?status=#{upcased_status}"
 
-      invoice = JSON.parse(response.body)
+      invoice = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(invoice["status"]).to eq(status)
+      expect(invoice["attributes"]["status"]).to eq(status)
     end
 
     it "can find all invoices by id" do
@@ -94,10 +96,10 @@ describe "Invoices API" do
 
       get "/api/v1/invoices/find_all?id=#{id}"
 
-      invoice = JSON.parse(response.body)
+      invoice = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(invoice.first["id"]).to eq(id)
+      expect(invoice.first["id"].to_i).to eq(id)
       expect(invoice.class).to eq(Array)
     end
 
@@ -108,12 +110,12 @@ describe "Invoices API" do
 
       get "/api/v1/invoices/find_all?status=#{status}"
 
-      invoice = JSON.parse(response.body)
+      invoice = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
       expect(invoice.count).to eq(2)
-      expect(invoice.first["status"]).to eq(status)
-      expect(invoice.second["status"]).to eq(status)
+      expect(invoice.first["attributes"]["status"]).to eq(status)
+      expect(invoice.second["attributes"]["status"]).to eq(status)
     end
 
     it "can find all invoices by created time" do
@@ -121,15 +123,17 @@ describe "Invoices API" do
       create(:invoice, created_at: "2012-04-27 14:53:59 UTC")
       create(:invoice, created_at: "2012-03-27 14:53:59 UTC")
       created_at = Invoice.first.created_at
+      id1 = Invoice.first.id
+      id3 = Invoice.third.id
 
       get "/api/v1/invoices/find_all?created_at=#{created_at}"
 
-      invoice = JSON.parse(response.body)
+      invoice = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
       expect(invoice.count).to eq(2)
-      expect(invoice.first["created_at"]).to eq("2012-03-27T14:53:59.000Z")
-      expect(invoice.second["created_at"]).to eq("2012-03-27T14:53:59.000Z")
+      expect(invoice.first["id"].to_i).to eq(id1)
+      expect(invoice.second["id"].to_i).to eq(id3)
     end
 
     it "can find all invoices by updated time" do
@@ -137,15 +141,17 @@ describe "Invoices API" do
       create(:invoice, updated_at: "2012-05-27 14:53:59 UTC")
       create(:invoice, updated_at: "2012-04-27 14:53:59 UTC")
       updated_at = Invoice.first.updated_at
+      id1 = Invoice.first.id
+      id3 = Invoice.third.id
 
       get "/api/v1/invoices/find_all?updated_at=#{updated_at}"
 
-      invoice = JSON.parse(response.body)
+      invoice = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
       expect(invoice.count).to eq(2)
-      expect(invoice.first["updated_at"]).to eq("2012-04-27T14:53:59.000Z")
-      expect(invoice.second["updated_at"]).to eq("2012-04-27T14:53:59.000Z")
+      expect(invoice.first["id"].to_i).to eq(id1)
+      expect(invoice.second["id"].to_i).to eq(id3)
     end
 
     it "can get one invoice at random" do
@@ -157,10 +163,10 @@ describe "Invoices API" do
 
       get "/api/v1/invoices/random"
 
-      invoice = JSON.parse(response.body)
+      invoice = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(ids).to include(invoice["id"])
+      expect(ids).to include(invoice["id"].to_i)
     end
   end
 
@@ -228,8 +234,8 @@ describe "Invoices API" do
       transactions = JSON.parse(response.body)
 
       expect(transactions.count).to eq(2)
-      expect(transactions.first["id"]).to eq(t_id1)
-      expect(transactions.second["id"]).to eq(t_id3)
+      expect(transactions.first["id"].to_i).to eq(t_id1)
+      expect(transactions.second["id"].to_i).to eq(t_id3)
     end
 
     it "sends a merchant associated with an invoice" do
@@ -246,7 +252,7 @@ describe "Invoices API" do
 
       merchant = JSON.parse(response.body)
 
-      expect(merchant["id"]).to eq(mid)
+      expect(merchant["id"].to_i).to eq(mid)
     end
 
     it "sends a customer associated with an invoice" do
@@ -263,7 +269,7 @@ describe "Invoices API" do
 
       customer = JSON.parse(response.body)
 
-      expect(customer["id"]).to eq(cid)
+      expect(customer["id"].to_i).to eq(cid)
     end
   end
 

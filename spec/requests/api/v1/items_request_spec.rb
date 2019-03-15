@@ -31,10 +31,10 @@ describe "Items API" do
 
       get "/api/v1/items/find?id=#{id}"
 
-      item = JSON.parse(response.body)
+      item = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(item["id"]).to eq(id)
+      expect(item["id"].to_i).to eq(id)
     end
 
     it "can find one item by its name" do
@@ -43,10 +43,10 @@ describe "Items API" do
 
       get "/api/v1/items/find?name=#{name}"
 
-      item = JSON.parse(response.body)
+      item = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(item["name"]).to eq(name)
+      expect(item["attributes"]["name"]).to eq(name)
     end
 
     it "can find one item by its description" do
@@ -55,36 +55,38 @@ describe "Items API" do
 
       get "/api/v1/items/find?description=#{description}"
 
-      item = JSON.parse(response.body)
+      item = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(item["description"]).to eq(description)
+      expect(item["attributes"]["description"]).to eq(description)
     end
 
     it "can find one item by its created time" do
       create(:item, created_at: "2012-03-27 14:53:59 UTC")
       create(:item, created_at: "2012-04-27 14:53:59 UTC")
       created_at = Item.second.created_at
+      id = Item.second.id
 
       get "/api/v1/items/find?created_at=#{created_at}"
 
-      item = JSON.parse(response.body)
+      item = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(item["created_at"]).to eq("2012-04-27T14:53:59.000Z")
+      expect(item["id"].to_i).to eq(id)
     end
 
     it "can find one item by its updated time" do
       create(:item, updated_at: "2012-03-27 14:53:59 UTC")
       create(:item, updated_at: "2012-04-27 14:53:59 UTC")
       updated_at = Item.second.updated_at
+      id = Item.second.id
 
       get "/api/v1/items/find?updated_at=#{updated_at}"
 
-      item = JSON.parse(response.body)
+      item = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(item["updated_at"]).to eq("2012-04-27T14:53:59.000Z")
+      expect(item["id"].to_i).to eq(id)
     end
 
     xit "can find one item case insensitive name" do
@@ -94,10 +96,10 @@ describe "Items API" do
 
       get "/api/v1/items/find?name=#{upcased_name}"
 
-      item = JSON.parse(response.body)
+      item = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(item["name"]).to eq(name)
+      expect(item["attributes"]["name"]).to eq(name)
     end
 
     it "can find all items by id" do
@@ -106,10 +108,10 @@ describe "Items API" do
 
       get "/api/v1/items/find_all?id=#{id}"
 
-      item = JSON.parse(response.body)
+      item = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(item.first["id"]).to eq(id)
+      expect(item.first["id"].to_i).to eq(id)
       expect(item.class).to eq(Array)
     end
 
@@ -120,12 +122,12 @@ describe "Items API" do
 
       get "/api/v1/items/find_all?name=#{name}"
 
-      item = JSON.parse(response.body)
+      item = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
       expect(item.count).to eq(2)
-      expect(item.first["name"]).to eq(name)
-      expect(item.second["name"]).to eq(name)
+      expect(item.first["attributes"]["name"]).to eq(name)
+      expect(item.second["attributes"]["name"]).to eq(name)
     end
 
     it "can find all items by description" do
@@ -135,27 +137,27 @@ describe "Items API" do
 
       get "/api/v1/items/find_all?description=#{description}"
 
-      item = JSON.parse(response.body)
+      item = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
       expect(item.count).to eq(2)
-      expect(item.first["description"]).to eq(description)
-      expect(item.second["description"]).to eq(description)
+      expect(item.first["attributes"]["description"]).to eq(description)
+      expect(item.second["attributes"]["description"]).to eq(description)
     end
 
     it "can find all items by unit_price" do
       create_list(:item, 3)
-      price = Item.second.unit_price
-      create(:item, unit_price: price)
+      price = (Item.second.unit_price/100.to_f).to_s
+      create(:item, unit_price: Item.second.unit_price)
 
       get "/api/v1/items/find_all?unit_price=#{price}"
 
-      item = JSON.parse(response.body)
+      item = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
       expect(item.count).to eq(2)
-      expect(item.first["unit_price"]).to eq(price)
-      expect(item.second["unit_price"]).to eq(price)
+      expect(item.first["attributes"]["unit_price"]).to eq(price)
+      expect(item.second["attributes"]["unit_price"]).to eq(price)
     end
 
     it "can find all items by created time" do
@@ -163,15 +165,17 @@ describe "Items API" do
       create(:item, created_at: "2012-04-27 14:53:59 UTC")
       create(:item, created_at: "2012-03-27 14:53:59 UTC")
       created_at = Item.first.created_at
+      id1 = Item.first.id
+      id3 = Item.third.id
 
       get "/api/v1/items/find_all?created_at=#{created_at}"
 
-      item = JSON.parse(response.body)
+      item = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
       expect(item.count).to eq(2)
-      expect(item.first["created_at"]).to eq("2012-03-27T14:53:59.000Z")
-      expect(item.second["created_at"]).to eq("2012-03-27T14:53:59.000Z")
+      expect(item.first["id"].to_i).to eq(id1)
+      expect(item.second["id"].to_i).to eq(id3)
     end
 
     it "can find all items by updated time" do
@@ -179,15 +183,17 @@ describe "Items API" do
       create(:item, updated_at: "2012-05-27 14:53:59 UTC")
       create(:item, updated_at: "2012-04-27 14:53:59 UTC")
       updated_at = Item.first.updated_at
+      id1 = Item.first.id
+      id3 = Item.third.id
 
       get "/api/v1/items/find_all?updated_at=#{updated_at}"
 
-      item = JSON.parse(response.body)
+      item = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
       expect(item.count).to eq(2)
-      expect(item.first["updated_at"]).to eq("2012-04-27T14:53:59.000Z")
-      expect(item.second["updated_at"]).to eq("2012-04-27T14:53:59.000Z")
+      expect(item.first["id"].to_i).to eq(id1)
+      expect(item.second["id"].to_i).to eq(id3)
     end
 
     it "can get one item at random" do
@@ -199,10 +205,10 @@ describe "Items API" do
 
       get "/api/v1/items/random"
 
-      item = JSON.parse(response.body)
+      item = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(ids).to include(item["id"])
+      expect(ids).to include(item["id"].to_i)
     end
   end
 
