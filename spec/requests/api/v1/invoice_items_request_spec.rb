@@ -50,7 +50,7 @@ describe "Invoice_items API" do
     end
 
     it "can find one invoice_item by its unit_price" do
-      create_list(:invoice_item, 3)
+      create_list(:invoice_item, 3, unit_price: 13635)
       unit_price = InvoiceItem.second.unit_price
 
       get "/api/v1/invoice_items/find?unit_price=#{unit_price}"
