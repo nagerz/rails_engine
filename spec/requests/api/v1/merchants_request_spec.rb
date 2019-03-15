@@ -227,13 +227,13 @@ describe "Merchants API" do
       invoice5 = create(:invoice, customer: customer, merchant: @m4, updated_at: date_today)
       invoice6 = create(:invoice, customer: customer, merchant: @m5, updated_at: date_one)
 
-      invoice_item1 = create(:invoice_item, invoice: invoice1, quantity: 1, unit_price: 5)
-      invoice_item2 = create(:invoice_item, invoice: invoice1, quantity: 1, unit_price: 4)
-      invoice_item3 = create(:invoice_item, invoice: invoice2, quantity: 2, unit_price: 3)
-      invoice_item4 = create(:invoice_item, invoice: invoice3, quantity: 3, unit_price: 6)
-      invoice_item5 = create(:invoice_item, invoice: invoice4, quantity: 6, unit_price: 1)
-      invoice_item6 = create(:invoice_item, invoice: invoice5, quantity: 1, unit_price: 97)
-      invoice_item7 = create(:invoice_item, invoice: invoice6, quantity: 100, unit_price: 1000)
+      invoice_item1 = create(:invoice_item, invoice: invoice1, quantity: 1, unit_price: 500)
+      invoice_item2 = create(:invoice_item, invoice: invoice1, quantity: 1, unit_price: 400)
+      invoice_item3 = create(:invoice_item, invoice: invoice2, quantity: 2, unit_price: 300)
+      invoice_item4 = create(:invoice_item, invoice: invoice3, quantity: 3, unit_price: 600)
+      invoice_item5 = create(:invoice_item, invoice: invoice4, quantity: 6, unit_price: 100)
+      invoice_item6 = create(:invoice_item, invoice: invoice5, quantity: 1, unit_price: 9700)
+      invoice_item7 = create(:invoice_item, invoice: invoice6, quantity: 100, unit_price: 100000)
 
       transaction1 = create(:transaction, invoice: invoice1, result: "success", updated_at: date_one)
       transaction2 = create(:transaction, invoice: invoice2, result: "success", updated_at: date_two)
@@ -250,15 +250,12 @@ describe "Merchants API" do
 
       expect(response).to be_successful
 
-      merchants = JSON.parse(response.body)
+      merchants = JSON.parse(response.body)["data"]
 
       expect(merchants.count).to eq(3)
-      expect(merchants[0]["name"]).to eq(@m4.name)
-      expect(merchants[0]["total_revenue"]).to eq(97)
-      expect(merchants[1]["name"]).to eq(@m2.name)
-      expect(merchants[1]["total_revenue"]).to eq(24)
-      expect(merchants[2]["name"]).to eq(@m1.name)
-      expect(merchants[2]["total_revenue"]).to eq(9)
+      expect(merchants[0]["attributes"]["name"]).to eq(@m4.name)
+      expect(merchants[1]["attributes"]["name"]).to eq(@m2.name)
+      expect(merchants[2]["attributes"]["name"]).to eq(@m1.name)
     end
 
     it "sends the top merchants ranked by total revenue (no quantity provided)" do
@@ -266,17 +263,13 @@ describe "Merchants API" do
 
       expect(response).to be_successful
 
-      merchants = JSON.parse(response.body)
+      merchants = JSON.parse(response.body)["data"]
 
       expect(merchants.count).to eq(4)
-      expect(merchants[0]["name"]).to eq(@m4.name)
-      expect(merchants[0]["total_revenue"]).to eq(97)
-      expect(merchants[1]["name"]).to eq(@m2.name)
-      expect(merchants[1]["total_revenue"]).to eq(24)
-      expect(merchants[2]["name"]).to eq(@m1.name)
-      expect(merchants[2]["total_revenue"]).to eq(9)
-      expect(merchants[3]["name"]).to eq(@m3.name)
-      expect(merchants[3]["total_revenue"]).to eq(6)
+      expect(merchants[0]["attributes"]["name"]).to eq(@m4.name)
+      expect(merchants[1]["attributes"]["name"]).to eq(@m2.name)
+      expect(merchants[2]["attributes"]["name"]).to eq(@m1.name)
+      expect(merchants[3]["attributes"]["name"]).to eq(@m3.name)
     end
 
     it "sends the top merchants ranked by items sold" do
@@ -286,15 +279,12 @@ describe "Merchants API" do
 
       expect(response).to be_successful
 
-      merchants = JSON.parse(response.body)
+      merchants = JSON.parse(response.body)["data"]
 
       expect(merchants.count).to eq(3)
-      expect(merchants[0]["name"]).to eq(@m3.name)
-      expect(merchants[0]["items_sold"]).to eq(6)
-      expect(merchants[1]["name"]).to eq(@m2.name)
-      expect(merchants[1]["items_sold"]).to eq(5)
-      expect(merchants[2]["name"]).to eq(@m1.name)
-      expect(merchants[2]["items_sold"]).to eq(2)
+      expect(merchants[0]["attributes"]["name"]).to eq(@m3.name)
+      expect(merchants[1]["attributes"]["name"]).to eq(@m2.name)
+      expect(merchants[2]["attributes"]["name"]).to eq(@m1.name)
     end
 
     it "sends the top merchants ranked by items sold (no quantity provided)" do
@@ -302,17 +292,13 @@ describe "Merchants API" do
 
       expect(response).to be_successful
 
-      merchants = JSON.parse(response.body)
+      merchants = JSON.parse(response.body)["data"]
 
       expect(merchants.count).to eq(4)
-      expect(merchants[0]["name"]).to eq(@m3.name)
-      expect(merchants[0]["items_sold"]).to eq(6)
-      expect(merchants[1]["name"]).to eq(@m2.name)
-      expect(merchants[1]["items_sold"]).to eq(5)
-      expect(merchants[2]["name"]).to eq(@m1.name)
-      expect(merchants[2]["items_sold"]).to eq(2)
-      expect(merchants[3]["name"]).to eq(@m4.name)
-      expect(merchants[3]["items_sold"]).to eq(1)
+      expect(merchants[0]["attributes"]["name"]).to eq(@m3.name)
+      expect(merchants[1]["attributes"]["name"]).to eq(@m2.name)
+      expect(merchants[2]["attributes"]["name"]).to eq(@m1.name)
+      expect(merchants[3]["attributes"]["name"]).to eq(@m4.name)
     end
 
     it "sends the total revenue for a date" do
@@ -322,9 +308,9 @@ describe "Merchants API" do
 
       expect(response).to be_successful
 
-      revenue = JSON.parse(response.body)
+      revenue = JSON.parse(response.body)["data"]["attributes"]["total_revenue"]
 
-      expect(revenue).to eq(33)
+      expect(revenue).to eq("33.00")
     end
 
     it "sends the total revenue for a date (no date provided)" do
@@ -334,9 +320,9 @@ describe "Merchants API" do
 
       expect(response).to be_successful
 
-      revenue = JSON.parse(response.body)
+      revenue = JSON.parse(response.body)["data"]["attributes"]["total_revenue"]
 
-      expect(revenue).to eq(97)
+      expect(revenue).to eq("97.00")
     end
   end
 
