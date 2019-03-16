@@ -400,7 +400,6 @@ describe "Merchants API" do
         customer = JSON.parse(response.body)["data"]
 
         expect(customer["attributes"]["id"].to_i).to eq(cid)
-        expect(customer["attributes"]["transaction_count"].to_i).to eq(2)
       end
       # it "sends a collection of customers which have pending (unpaid) invoices" do
       # end
