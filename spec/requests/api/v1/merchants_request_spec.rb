@@ -334,6 +334,8 @@ describe "Merchants API" do
 
         @c1 = create(:customer)
         @c2 = create(:customer)
+        @c3 = create(:customer)
+        @c4 = create(:customer)
 
         @m1 = create(:merchant)
         @m2 = create(:merchant)
@@ -347,6 +349,8 @@ describe "Merchants API" do
         invoice4 = create(:invoice, customer: @c1, merchant: @m2, updated_at: date_one)
         #invoice with failed transaction
         invoice5 = create(:invoice, customer: @c1, merchant: @m1, updated_at: date_one)
+        invoice6 = create(:invoice, customer: @c3, merchant: @m1, updated_at: date_one)
+        invoice7 = create(:invoice, customer: @c4, merchant: @m1, updated_at: date_one)
 
         invoice_item1 = create(:invoice_item, invoice: invoice1, quantity: 1, unit_price: 200)
         invoice_item2 = create(:invoice_item, invoice: invoice1, quantity: 1, unit_price: 300)
@@ -363,6 +367,7 @@ describe "Merchants API" do
 
         transaction4 = create(:transaction, invoice: invoice4, result: "success", updated_at: date_one)
         transaction5 = create(:transaction, invoice: invoice5, result: "failed", updated_at: date_today)
+        transaction6 = create(:transaction, invoice: invoice6, result: "failed", updated_at: date_today)
       end
 
       it "sends the total revenue for a merchant across successful transactions" do
@@ -401,8 +406,24 @@ describe "Merchants API" do
 
         expect(customer["attributes"]["id"].to_i).to eq(cid)
       end
-      # it "sends a collection of customers which have pending (unpaid) invoices" do
-      # end
+
+      it "sends a collection of customers which have pending (unpaid) invoices" do
+        mid = @m1.id
+        c1id = @c1.id
+        c3id = @c3.id
+        c4id = @c4.id
+
+        get "/api/v1/merchants/#{mid}/customers_with_pending_invoices"
+
+        expect(response).to be_successful
+
+        customers = JSON.parse(response.body)["data"]
+
+        expect(customers.size).to eq(3)
+        expect(customers.first["attributes"]["id"].to_i).to eq(c1id)
+        expect(customers.second["attributes"]["id"].to_i).to eq(c3id)
+        expect(customers.third["attributes"]["id"].to_i).to eq(c4id)
+      end
 
     end
   end
