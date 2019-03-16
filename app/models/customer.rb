@@ -16,4 +16,15 @@ class Customer < ApplicationRecord
     .order("transaction_count desc")
     .first
   end
+
+  def self.merchant_pending_invoice_customers(merchant_id)
+    # select("customers.*, count(transactions) transaction_count")
+    # .joins(invoices: [:transactions])
+    # .merge(Transaction.successful)
+    # .where("invoices.merchant_id = ?", merchant_id)
+    # .group(:id)
+    # .order("transaction_count desc")
+    # .first
+  end
+
 end

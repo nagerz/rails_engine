@@ -18,6 +18,7 @@ RSpec.describe Customer, type: :model do
 
       @c1 = create(:customer)
       @c2 = create(:customer)
+      @c3 = create(:customer)
 
       @m1 = create(:merchant)
       @m2 = create(:merchant)
@@ -30,9 +31,11 @@ RSpec.describe Customer, type: :model do
       invoice5 = create(:invoice, customer: @c2, merchant: @m1, updated_at: date_one)
 
       invoice6 = create(:invoice, customer: @c1, merchant: @m1, updated_at: date_one)
+      invoice9 = create(:invoice, customer: @c3, merchant: @m1, updated_at: date_one)
 
       invoice7 = create(:invoice, customer: @c1, merchant: @m2, updated_at: date_one)
       invoice8 = create(:invoice, customer: @c1, merchant: @m2, updated_at: date_one)
+
 
       invoice_item1 = create(:invoice_item, invoice: invoice1, quantity: 1, unit_price: 500)
       invoice_item2 = create(:invoice_item, invoice: invoice1, quantity: 1, unit_price: 400)
@@ -69,6 +72,17 @@ RSpec.describe Customer, type: :model do
       expect(Customer.merchant_favorite_customer(mid2)).to eq(@c1)
       expect(Customer.merchant_favorite_customer(mid2).id).to eq(cid1)
       expect(Customer.merchant_favorite_customer(mid2).transaction_count).to eq(2)
+    end
+
+    it ".merchant_pending_invoice_customers()" do
+      mid1 = @m1.id
+      mid2 = @m2.id
+
+      expect(Customer.merchant_pending_invoice_customers(mid1).size).to eq(2)
+      expect(Customer.merchant_pending_invoice_customers(mid1).first).to eq(@c1)
+      expect(Customer.merchant_pending_invoice_customers(mid1).second).to eq(@c3)
+
+      expect(Customer.merchant_pending_invoice_customers(mid2)).to eq(nil)
     end
   end
 end
