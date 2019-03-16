@@ -16,8 +16,8 @@ class Item < ApplicationRecord
   # end
 
   def self.items_sorted_by_revenue
-    select("merchants.*, sum(invoice_items.quantity * invoice_items.unit_price) total_revenue")
-    .joins(invoices: [:invoice_items, :transactions])
+    select("items.*, sum(invoice_items.quantity * invoice_items.unit_price) total_revenue")
+    .joins(invoices: [:transactions])
     .merge(Transaction.successful)
     .group(:id)
     .order("total_revenue desc")

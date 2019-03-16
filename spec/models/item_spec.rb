@@ -22,10 +22,10 @@ RSpec.describe Item, type: :model do
       customer2 = create(:customer)
       merchant1 = create(:merchant)
       merchant2 = create(:merchant)
-      item1 = create(:item, merchant: merchant1)
-      item2 = create(:item, merchant: merchant1)
-      item3 = create(:item, merchant: merchant2)
-      item4 = create(:item, merchant: merchant2)
+      @item1 = create(:item, merchant: merchant1)
+      @item2 = create(:item, merchant: merchant1)
+      @item3 = create(:item, merchant: merchant2)
+      @item4 = create(:item, merchant: merchant2)
 
       invoice1 = create(:invoice, customer: customer1, merchant: merchant1, updated_at: date_one)
       invoice2 = create(:invoice, customer: customer1, merchant: merchant1, updated_at: date_one)
@@ -38,17 +38,17 @@ RSpec.describe Item, type: :model do
 
       invoice10 = create(:invoice, customer: customer2, merchant: merchant2, updated_at: date_one)
 
-      invoice_item1 = create(:invoice_item, item: item1, invoice: invoice1, quantity: 1, unit_price: 100)
-      invoice_item2 = create(:invoice_item, item: item1, invoice: invoice2, quantity: 2, unit_price: 200)
-      invoice_item3 = create(:invoice_item, item: item2, invoice: invoice3, quantity: 3, unit_price: 300)
-      invoice_item4 = create(:invoice_item, item: item2, invoice: invoice4, quantity: 4, unit_price: 400)
-      invoice_item5 = create(:invoice_item, item: item3, invoice: invoice5, quantity: 5, unit_price: 500)
-      invoice_item6 = create(:invoice_item, item: item3, invoice: invoice6, quantity: 6, unit_price: 600)
-      invoice_item7 = create(:invoice_item, item: item4, invoice: invoice7, quantity: 7, unit_price: 700)
-      invoice_item8 = create(:invoice_item, item: item4, invoice: invoice8, quantity: 8, unit_price: 800)
-      invoice_item9 = create(:invoice_item, item: item1, invoice: invoice1, quantity: 5, unit_price: 500)
+      invoice_item1 = create(:invoice_item, item: @item1, invoice: invoice1, quantity: 1, unit_price: 100)
+      invoice_item2 = create(:invoice_item, item: @item1, invoice: invoice2, quantity: 2, unit_price: 200)
+      invoice_item3 = create(:invoice_item, item: @item2, invoice: invoice3, quantity: 3, unit_price: 300)
+      invoice_item4 = create(:invoice_item, item: @item2, invoice: invoice4, quantity: 4, unit_price: 400)
+      invoice_item5 = create(:invoice_item, item: @item3, invoice: invoice5, quantity: 5, unit_price: 500)
+      invoice_item6 = create(:invoice_item, item: @item3, invoice: invoice6, quantity: 6, unit_price: 600)
+      invoice_item7 = create(:invoice_item, item: @item4, invoice: invoice7, quantity: 7, unit_price: 700)
+      invoice_item8 = create(:invoice_item, item: @item4, invoice: invoice8, quantity: 8, unit_price: 800)
+      invoice_item9 = create(:invoice_item, item: @item1, invoice: invoice1, quantity: 5, unit_price: 500)
 
-      invoice_item10 = create(:invoice_item, item: item2, invoice: invoice10, quantity: 100, unit_price: 10000)
+      invoice_item10 = create(:invoice_item, item: @item2, invoice: invoice10, quantity: 100, unit_price: 10000)
 
       transaction1 = create(:transaction, invoice: invoice1, result: "success")
       transaction2 = create(:transaction, invoice: invoice2, result: "success")
@@ -63,19 +63,19 @@ RSpec.describe Item, type: :model do
     end
 
     it ".items_sorted_by_revenue" do
-      expect(Item.items_sorted_by_revenue).to eq([@m4, @m3, @m1, @m2])
+      expect(Item.items_sorted_by_revenue).to eq([@item4, @item3, @item1, @item2])
     end
 
     # it ".items_sorted_by_volume" do
-    #   expect(Item.items_sorted_by_items).to eq([@m3, @m2, @m1, @m4])
+    #   expect(Item.items_sorted_by_items).to eq([@item3, @item2, @item1, @item4])
     # end
 
     it ".top_items_by_revenue()" do
-      expect(Item.top_items_by_revenue("3")).to eq([@m4, @m3, @m1])
+      expect(Item.top_items_by_revenue("3")).to eq([@item4, @item3, @item1])
     end
 
     # it ".top_items_by_volume()" do
-    #   expect(Item.top_items_by_items(3)).to eq([@m3, @m2, @m1])
+    #   expect(Item.top_items_by_items(3)).to eq([@item3, @item2, @item1])
     # end
   end
 end

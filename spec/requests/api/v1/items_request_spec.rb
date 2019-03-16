@@ -260,10 +260,10 @@ describe "Items API" do
       customer2 = create(:customer)
       merchant1 = create(:merchant)
       merchant2 = create(:merchant)
-      item1 = create(:item, merchant: merchant1)
-      item2 = create(:item, merchant: merchant1)
-      item3 = create(:item, merchant: merchant2)
-      item4 = create(:item, merchant: merchant2)
+      @item1 = create(:item, merchant: merchant1)
+      @item2 = create(:item, merchant: merchant1)
+      @item3 = create(:item, merchant: merchant2)
+      @item4 = create(:item, merchant: merchant2)
 
       invoice1 = create(:invoice, customer: customer1, merchant: merchant1, updated_at: date_one)
       invoice2 = create(:invoice, customer: customer1, merchant: merchant1, updated_at: date_one)
@@ -276,17 +276,17 @@ describe "Items API" do
 
       invoice10 = create(:invoice, customer: customer2, merchant: merchant2, updated_at: date_one)
 
-      invoice_item1 = create(:invoice_item, item: item1, invoice: invoice1, quantity: 1, unit_price: 100)
-      invoice_item2 = create(:invoice_item, item: item1, invoice: invoice2, quantity: 2, unit_price: 200)
-      invoice_item3 = create(:invoice_item, item: item2, invoice: invoice3, quantity: 3, unit_price: 300)
-      invoice_item4 = create(:invoice_item, item: item2, invoice: invoice4, quantity: 4, unit_price: 400)
-      invoice_item5 = create(:invoice_item, item: item3, invoice: invoice5, quantity: 5, unit_price: 500)
-      invoice_item6 = create(:invoice_item, item: item3, invoice: invoice6, quantity: 6, unit_price: 600)
-      invoice_item7 = create(:invoice_item, item: item4, invoice: invoice7, quantity: 7, unit_price: 700)
-      invoice_item8 = create(:invoice_item, item: item4, invoice: invoice8, quantity: 8, unit_price: 800)
-      invoice_item9 = create(:invoice_item, item: item1, invoice: invoice1, quantity: 5, unit_price: 500)
+      invoice_item1 = create(:invoice_item, item: @item1, invoice: invoice1, quantity: 1, unit_price: 100)
+      invoice_item2 = create(:invoice_item, item: @item1, invoice: invoice2, quantity: 2, unit_price: 200)
+      invoice_item3 = create(:invoice_item, item: @item2, invoice: invoice3, quantity: 3, unit_price: 300)
+      invoice_item4 = create(:invoice_item, item: @item2, invoice: invoice4, quantity: 4, unit_price: 400)
+      invoice_item5 = create(:invoice_item, item: @item3, invoice: invoice5, quantity: 5, unit_price: 500)
+      invoice_item6 = create(:invoice_item, item: @item3, invoice: invoice6, quantity: 6, unit_price: 600)
+      invoice_item7 = create(:invoice_item, item: @item4, invoice: invoice7, quantity: 7, unit_price: 700)
+      invoice_item8 = create(:invoice_item, item: @item4, invoice: invoice8, quantity: 8, unit_price: 800)
+      invoice_item9 = create(:invoice_item, item: @item1, invoice: invoice1, quantity: 5, unit_price: 500)
 
-      invoice_item10 = create(:invoice_item, item: item2, invoice: invoice10, quantity: 100, unit_price: 10000)
+      invoice_item10 = create(:invoice_item, item: @item2, invoice: invoice10, quantity: 100, unit_price: 10000)
 
       transaction1 = create(:transaction, invoice: invoice1, result: "success")
       transaction2 = create(:transaction, invoice: invoice2, result: "success")
@@ -309,9 +309,9 @@ describe "Items API" do
       items = JSON.parse(response.body)["data"]
 
       expect(items.count).to eq(3)
-      expect(items[0]["attributes"]["name"]).to eq(@m4.name)
-      expect(items[1]["attributes"]["name"]).to eq(@m3.name)
-      expect(items[2]["attributes"]["name"]).to eq(@m1.name)
+      expect(items[0]["attributes"]["name"]).to eq(@item4.name)
+      expect(items[1]["attributes"]["name"]).to eq(@item3.name)
+      expect(items[2]["attributes"]["name"]).to eq(@item1.name)
     end
   end
 
