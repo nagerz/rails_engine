@@ -332,17 +332,21 @@ describe "Merchants API" do
         date_two = "2012-03-07 09:54:09 UTC"
         date_today = Date.today.to_s
 
-        customer = create(:customer)
+        @c1 = create(:customer)
+        @c2 = create(:customer)
 
         @m1 = create(:merchant)
         @m2 = create(:merchant)
 
-        invoice1 = create(:invoice, customer: customer, merchant: @m1, updated_at: date_one)
-        invoice2 = create(:invoice, customer: customer, merchant: @m1, updated_at: date_one)
-        invoice3 = create(:invoice, customer: customer, merchant: @m1, updated_at: date_two)
-
-        invoice4 = create(:invoice, customer: customer, merchant: @m2, updated_at: date_one)
-        invoice5 = create(:invoice, customer: customer, merchant: @m1, updated_at: date_one)
+        invoice1 = create(:invoice, customer: @c1, merchant: @m1, updated_at: date_one)
+        #invoice with different customer
+        invoice2 = create(:invoice, customer: @c2, merchant: @m1, updated_at: date_one)
+        #invoice updated on different day
+        invoice3 = create(:invoice, customer: @c1, merchant: @m1, updated_at: date_two)
+        #invoice belonging to different merchant
+        invoice4 = create(:invoice, customer: @c1, merchant: @m2, updated_at: date_one)
+        #invoice with failed transaction
+        invoice5 = create(:invoice, customer: @c1, merchant: @m1, updated_at: date_one)
 
         invoice_item1 = create(:invoice_item, invoice: invoice1, quantity: 1, unit_price: 200)
         invoice_item2 = create(:invoice_item, invoice: invoice1, quantity: 1, unit_price: 300)
@@ -385,8 +389,19 @@ describe "Merchants API" do
 
         expect(revenue).to eq("20.00")
       end
-      # it "sends the customer who has conducted the most total number of successful transactions" do
-      # end
+      it "sends the customer who has conducted the most total number of successful transactions" do
+        id = @m1.id
+        cid = @c1.id
+
+        get "/api/v1/merchants/#{id}/favorite_customer"
+
+        expect(response).to be_successful
+
+        customer = JSON.parse(response.body)["data"]
+
+        expect(customer["attributes"]["id"].to_i).to eq(cid)
+        expect(customer["attributes"]["transaction_count"].to_i).to eq(2)
+      end
       # it "sends a collection of customers which have pending (unpaid) invoices" do
       # end
 
