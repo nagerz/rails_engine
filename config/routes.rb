@@ -12,7 +12,7 @@ Rails.application.routes.draw do
         get '/:id/items', to: 'items#index'
         get '/:id/invoices', to: 'invoices#index'
         get '/:id/revenue', to: 'revenue#show'
-        get '/:id/favorite_customer', to: 'customer#show'
+        get '/:id/favorite_customer', to: 'favorite_customer#show'
       end
       namespace :customers do
         get 'find', to: 'search#show'
