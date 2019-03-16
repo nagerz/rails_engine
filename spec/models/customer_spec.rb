@@ -31,7 +31,8 @@ RSpec.describe Customer, type: :model do
       invoice5 = create(:invoice, customer: @c2, merchant: @m1, updated_at: date_one)
 
       invoice6 = create(:invoice, customer: @c1, merchant: @m1, updated_at: date_one)
-      invoice9 = create(:invoice, customer: @c3, merchant: @m1, updated_at: date_one)
+      invoice9 = create(:invoice, customer: @c1, merchant: @m1, updated_at: date_one)
+      invoice10 = create(:invoice, customer: @c3, merchant: @m1, updated_at: date_one)
 
       invoice7 = create(:invoice, customer: @c1, merchant: @m2, updated_at: date_one)
       invoice8 = create(:invoice, customer: @c1, merchant: @m2, updated_at: date_one)
@@ -57,6 +58,8 @@ RSpec.describe Customer, type: :model do
       transaction6 = create(:transaction, invoice: invoice6, result: "failed")
       transaction7 = create(:transaction, invoice: invoice7, result: "success")
       transaction8 = create(:transaction, invoice: invoice8, result: "success")
+      transaction9 = create(:transaction, invoice: invoice9, result: "failed")
+      transaction23 = create(:transaction, invoice: invoice3, result: "failed")
     end
 
     it ".merchant_favorite_customer()" do
@@ -74,7 +77,7 @@ RSpec.describe Customer, type: :model do
       expect(Customer.merchant_favorite_customer(mid2).transaction_count).to eq(2)
     end
 
-    it ".merchant_pending_invoice_customers()" do
+    xit ".merchant_pending_invoice_customers()" do
       mid1 = @m1.id
       mid2 = @m2.id
 
