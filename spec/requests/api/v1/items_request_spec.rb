@@ -299,10 +299,26 @@ describe "Items API" do
 
       transaction10 = create(:transaction, invoice: invoice10, result: "failed")
     end
-    it "sends the top item ranked by total revenue" do
+
+    it "sends the top items ranked by total revenue" do
       x = 3
 
       get "/api/v1/items/most_revenue?quantity=#{x}"
+
+      expect(response).to be_successful
+
+      items = JSON.parse(response.body)["data"]
+
+      expect(items.count).to eq(3)
+      expect(items[0]["attributes"]["name"]).to eq(@item4.name)
+      expect(items[1]["attributes"]["name"]).to eq(@item3.name)
+      expect(items[2]["attributes"]["name"]).to eq(@item1.name)
+    end
+
+    it "sends the top items ranked by total quantity" do
+      x = 3
+
+      get "/api/v1/items/most_items?quantity=#{x}"
 
       expect(response).to be_successful
 
