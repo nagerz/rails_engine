@@ -14,8 +14,6 @@ class Merchant < ApplicationRecord
     merchants_sorted_by_items.limit(limit)
   end
 
-  ##Why does this not work
-  #.joins(:invoice_items, :transactions)
   def self.merchants_sorted_by_revenue
     select("merchants.*, sum(invoice_items.quantity * invoice_items.unit_price) total_revenue")
     .joins(invoices: [:invoice_items, :transactions])
