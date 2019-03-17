@@ -77,7 +77,7 @@ describe "Merchants API" do
       expect(merchant["id"].to_i).to eq(id)
     end
 
-    xit "can find one merchant case insensitive name" do
+    it "can find one merchant case insensitive name" do
       create_list(:merchant, 3)
       name = Merchant.second.name
       upcased_name = name.upcase

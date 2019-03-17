@@ -89,7 +89,7 @@ describe "Transactions API" do
       expect(transaction["id"].to_i).to eq(id)
     end
 
-    xit "can find one transaction case insensitive result" do
+    it "can find one transaction case insensitive result" do
       create_list(:transaction, 3)
       result = Transaction.second.result
       upcased_result = result.upcase
@@ -99,7 +99,7 @@ describe "Transactions API" do
       transaction = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(transaction["result"]).to eq(result)
+      expect(transaction["attributes"]["result"]).to eq(result)
     end
 
     it "can find all transactions by id" do

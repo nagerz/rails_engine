@@ -89,7 +89,7 @@ describe "Items API" do
       expect(item["id"].to_i).to eq(id)
     end
 
-    xit "can find one item case insensitive name" do
+    it "can find one item case insensitive name" do
       create_list(:item, 3)
       name = Item.second.name
       upcased_name = name.upcase

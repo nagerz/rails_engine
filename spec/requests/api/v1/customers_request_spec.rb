@@ -89,17 +89,30 @@ describe "Customers API" do
       expect(customer["id"].to_i).to eq(id)
     end
 
-    xit "can find one customer case insensitive name" do
+    it "can find one customer case insensitive first name" do
       create_list(:customer, 3)
-      name = Customer.second.name
+      name = Customer.second.first_name
       upcased_name = name.upcase
 
-      get "/api/v1/customers/find?name=#{upcased_name}"
+      get "/api/v1/customers/find?first_name=#{upcased_name}"
 
       customer = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(customer["name"]).to eq(name)
+      expect(customer["attributes"]["first_name"]).to eq(name)
+    end
+
+    it "can find one customer case insensitive last name" do
+      create_list(:customer, 3)
+      name = Customer.second.last_name
+      upcased_name = name.upcase
+
+      get "/api/v1/customers/find?last_name=#{upcased_name}"
+
+      customer = JSON.parse(response.body)["data"]
+
+      expect(response).to be_successful
+      expect(customer["attributes"]["last_name"]).to eq(name)
     end
 
     it "can find all customers by id" do

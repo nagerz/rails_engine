@@ -77,7 +77,7 @@ describe "Invoices API" do
       expect(invoice["id"].to_i).to eq(id)
     end
 
-    xit "can find one invoice case insensitive status" do
+    it "can find one invoice case insensitive status" do
       create_list(:invoice, 3)
       status = Invoice.second.status
       upcased_status = status.upcase
