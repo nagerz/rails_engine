@@ -30,4 +30,8 @@ class Item < ApplicationRecord
     .group(:id)
     .order("volume desc")
   end
+
+  def self.best_day(item_id)
+    
+  end
 end
