@@ -18,16 +18,16 @@ class Customer < ApplicationRecord
   end
 
   def self.merchant_pending_invoice_customers(merchant_id)
-    a = select("customers.*")
-    .joins('join invoices ON invoices.id = invoices.customer_id')
-    .joins('left outer join transactions ON transactions.invoice_id = invoices.id')
-    .where("transactions.result = ?", "success")
+    successful_invoices = Invoice.select("invoices.*")
+    .joins(:transactions)
+    .merge(Transaction.successful)
     .where("invoices.merchant_id = ?", merchant_id)
+    .pluck(:id)
 
-    t = select("customers.*")
-    .left_joins(invoices: [:transactions])
+    select("customers.*")
+    .joins(:invoices)
     .where("invoices.merchant_id = ?", merchant_id)
-    .except(a)
+    .where.not('invoices.id in (?)', successful_invoices)
     .group(:id)
   end
 

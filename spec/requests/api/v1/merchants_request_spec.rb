@@ -407,7 +407,7 @@ describe "Merchants API" do
         expect(customer["attributes"]["id"].to_i).to eq(cid)
       end
 
-      xit "sends a collection of customers which have pending (unpaid) invoices" do
+      it "sends a collection of customers which have pending (unpaid) invoices" do
         mid = @m1.id
         c1id = @c1.id
         c3id = @c3.id

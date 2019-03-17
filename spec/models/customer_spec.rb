@@ -77,15 +77,12 @@ RSpec.describe Customer, type: :model do
       expect(Customer.merchant_favorite_customer(mid2).transaction_count).to eq(2)
     end
 
-    xit ".merchant_pending_invoice_customers()" do
+    it ".merchant_pending_invoice_customers()" do
       mid1 = @m1.id
       mid2 = @m2.id
 
-      expect(Customer.merchant_pending_invoice_customers(mid1).size).to eq(2)
       expect(Customer.merchant_pending_invoice_customers(mid1).first).to eq(@c1)
       expect(Customer.merchant_pending_invoice_customers(mid1).second).to eq(@c3)
-
-      expect(Customer.merchant_pending_invoice_customers(mid2)).to eq(nil)
     end
   end
 end
