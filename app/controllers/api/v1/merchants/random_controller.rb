@@ -1,7 +1,7 @@
 class Api::V1::Merchants::RandomController < ApplicationController
 
   def show
-    render json: Merchant.order("RANDOM()").first
+    render json: MerchantSerializer.new(Merchant.order("RANDOM()").first)
   end
 
 end

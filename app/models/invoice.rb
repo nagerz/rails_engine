@@ -1,7 +1,11 @@
 class Invoice < ApplicationRecord
-  belongs_to :customer, foreign_key: 'customer_id'
-  belongs_to :merchant, foreign_key: 'merchant_id'
+  belongs_to :customer
+  belongs_to :merchant
   has_many :invoice_items
-  has_many :invoices, through: :invoice_items
+  has_many :items, through: :invoice_items
   has_many :transactions
+
+  validates_presence_of :status
+
+  scope :success, -> { where(result: "shipped")}
 end
