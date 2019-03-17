@@ -253,11 +253,10 @@ describe "Items API" do
 
   context "Business Intelligence Endpoints" do
     before :each do
-      @date1 = "2012-03-25 09:54:09 UTC"
-      @date2 = "2012-03-07 09:54:09 UTC"
-      @date3 = "2012-03-08 09:54:09 UTC"
-      #@date4 = "2012-03-09 09:54:09 UTC"
-      @date4 = "2012-03-09"
+      @date1 = "2012-03-25".to_date
+      @date2 = "2012-03-07".to_date
+      @date3 = "2012-03-08".to_date
+      @date4 = "2012-03-09".to_date
 
       customer1 = create(:customer)
       customer2 = create(:customer)
@@ -291,8 +290,8 @@ describe "Items API" do
       invoice_item7 = create(:invoice_item, item: @item4, invoice: invoice7, quantity: 7, unit_price: 700)
       invoice_item8 = create(:invoice_item, item: @item4, invoice: invoice8, quantity: 8, unit_price: 800)
       invoice_item9 = create(:invoice_item, item: @item1, invoice: invoice1, quantity: 1, unit_price: 100)
-      invoice_item10 = create(:invoice_item, item: @item1, invoice: invoice10, quantity: 2, unit_price: 600)
-      invoice_item11 = create(:invoice_item, item: @item1, invoice: invoice11, quantity: 2, unit_price: 600)
+      invoice_item10 = create(:invoice_item, item: @item1, invoice: invoice10, quantity: 3, unit_price: 400)
+      invoice_item11 = create(:invoice_item, item: @item1, invoice: invoice11, quantity: 3, unit_price: 400)
 
       invoice_item12 = create(:invoice_item, item: @item2, invoice: invoice12, quantity: 100, unit_price: 10000)
 
@@ -343,6 +342,8 @@ describe "Items API" do
     it "sends the date with the most sales for a given item" do
       id1 = @item1.id
       id2 = @item2.id
+      d2 = "2012-03-07"
+      d4 = "2012-03-09"
 
       get "/api/v1/items/#{id1}/best_day"
 
@@ -350,7 +351,7 @@ describe "Items API" do
 
       date = JSON.parse(response.body)["data"]["attributes"]["best_day"]
 
-      expect(date).to eq(@date4)
+      expect(date).to eq(d4)
 
       get "/api/v1/items/#{id2}/best_day"
 
@@ -358,7 +359,7 @@ describe "Items API" do
 
       date = JSON.parse(response.body)["data"]["attributes"]["best_day"]
 
-      expect(date).to eq(@date2)
+      expect(date).to eq(d2)
     end
   end
 

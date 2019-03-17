@@ -32,6 +32,12 @@ class Item < ApplicationRecord
   end
 
   def self.best_day(item_id)
-    
+    select("DATE(invoices.created_at) items_date, sum(invoice_items.quantity) day_items")
+    .joins(invoices: [:transactions])
+    .merge(Transaction.successful)
+    .where(id: item_id)
+    .group(:id, "DATE(invoices.created_at)")
+    .order("day_items desc", "items_date desc")
+    .first.items_date
   end
 end
