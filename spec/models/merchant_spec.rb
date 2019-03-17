@@ -90,6 +90,19 @@ RSpec.describe Merchant, type: :model do
 
       expect(Merchant.merchant_total_revenue(id, date)).to eq(1800)
     end
+
+    it ".merchant_favorite_customer()" do
+      mid1 = @m1.id
+      mid2 = @m2.id
+      cid1 = @c1.id
+      cid2 = @c2.id
+
+      expect(Merchant.customer_favorite_merchant(cid1)).to eq(@m2)
+      expect(Merchant.customer_favorite_merchant(cid1).id).to eq(mid2)
+
+      expect(Merchant.customer_favorite_merchant(cid2)).to eq(@m2)
+      expect(Merchant.customer_favorite_merchant(cid2).id).to eq(mid2)
+    end
   end
 
 end
