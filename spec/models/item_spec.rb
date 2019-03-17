@@ -66,16 +66,16 @@ RSpec.describe Item, type: :model do
       expect(Item.items_sorted_by_revenue).to eq([@item4, @item3, @item1, @item2])
     end
 
-    # it ".items_sorted_by_volume" do
-    #   expect(Item.items_sorted_by_items).to eq([@item3, @item2, @item1, @item4])
-    # end
+    it ".items_sorted_by_volume" do
+      expect(Item.items_sorted_by_volume).to eq([@item4, @item3, @item1, @item2])
+    end
 
     it ".top_items_by_revenue()" do
       expect(Item.top_items_by_revenue("3")).to eq([@item4, @item3, @item1])
     end
 
-    # it ".top_items_by_volume()" do
-    #   expect(Item.top_items_by_items(3)).to eq([@item3, @item2, @item1])
-    # end
+    it ".top_items_by_volume()" do
+      expect(Item.top_items_by_volume("3")).to eq([@item4, @item3, @item1])
+    end
   end
 end

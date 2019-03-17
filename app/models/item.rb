@@ -11,9 +11,9 @@ class Item < ApplicationRecord
     items_sorted_by_revenue.limit(limit.to_i)
   end
 
-  # def self.top_items_by_volume(limit = 10)
-  #   items_sorted_by_volume.limit(limit.to_i)
-  # end
+  def self.top_items_by_volume(limit = 10)
+    items_sorted_by_volume.limit(limit.to_i)
+  end
 
   def self.items_sorted_by_revenue
     select("items.*, sum(invoice_items.quantity * invoice_items.unit_price) total_revenue")
@@ -23,11 +23,11 @@ class Item < ApplicationRecord
     .order("total_revenue desc")
   end
 
-  # def self.items_sorted_by_volume
-  # select("merchants.*, sum(invoice_items.quantity) items_sold")
-  #   .joins(invoices: [:invoice_items, :transactions])
-  #   .merge(Transaction.successful)
-  #   .group(:id)
-  #   .order("items_sold desc")
-  # end
+  def self.items_sorted_by_volume
+  select("items.*, sum(invoice_items.quantity) volume")
+    .joins(invoices: [:transactions])
+    .merge(Transaction.successful)
+    .group(:id)
+    .order("volume desc")
+  end
 end
