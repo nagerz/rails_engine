@@ -8,7 +8,7 @@ class Api::V1::Merchants::RevenueController < ApplicationController
     # if params[:date]
     #   date = params[:date]
     # end
-    render json: RevenueSerializer.new(MerchantRevenue.new(params[:date]))
+    render json: TotalRevenueSerializer.new(MerchantRevenue.new(params[:date]))
   end
 
 end
