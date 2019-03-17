@@ -243,6 +243,47 @@ describe "Customers API" do
 
   context "Business Intelligence Endpoints" do
     before :each do
+      @c1 = create(:customer)
+      @c2 = create(:customer)
+
+      @m1 = create(:merchant)
+      @m2 = create(:merchant)
+
+      #Sucessful customer-merchant transactions
+      invoice1 = create(:invoice, customer: @c1, merchant: @m1)
+      invoice2 = create(:invoice, customer: @c1, merchant: @m1)
+
+      #Customer invoices with different merchant. 2 failed transactions.
+      invoice3 = create(:invoice, customer: @c1, merchant: @m2)
+      invoice4 = create(:invoice, customer: @c1, merchant: @m2)
+      invoice5 = create(:invoice, customer: @c1, merchant: @m2)
+
+      #Different customer
+      invoice6 = create(:invoice, customer: @c2, merchant: @m2)
+      invoice7 = create(:invoice, customer: @c2, merchant: @m2)
+      invoice8 = create(:invoice, customer: @c2, merchant: @m2)
+
+      transaction1 = create(:transaction, invoice: invoice1, result: "success")
+      transaction2 = create(:transaction, invoice: invoice2, result: "success")
+      transaction3 = create(:transaction, invoice: invoice3, result: "success")
+      transaction4 = create(:transaction, invoice: invoice4, result: "failed")
+      transaction5 = create(:transaction, invoice: invoice5, result: "failed")
+      transaction6 = create(:transaction, invoice: invoice6, result: "success")
+      transaction7 = create(:transaction, invoice: invoice7, result: "success")
+      transaction8 = create(:transaction, invoice: invoice8, result: "success")
+    end
+
+    it "sends the merchant where customer has conducted the most total number of successful transactions" do
+      mid = @m1.id
+      cid = @c1.id
+
+      get "/api/v1/customers/#{cid}/favorite_merchant"
+
+      expect(response).to be_successful
+
+      merchant = JSON.parse(response.body)["data"]
+
+      expect(merchant["attributes"]["id"].to_i).to eq(mid)
     end
   end
 
