@@ -253,8 +253,11 @@ describe "Items API" do
 
   context "Business Intelligence Endpoints" do
     before :each do
-      date_one = "2012-03-25 09:54:09 UTC"
-      date_two = "2012-03-07 09:54:09 UTC"
+      @date1 = "2012-03-25 09:54:09 UTC"
+      @date2 = "2012-03-07 09:54:09 UTC"
+      @date3 = "2012-03-08 09:54:09 UTC"
+      #@date4 = "2012-03-09 09:54:09 UTC"
+      @date4 = "2012-03-09"
 
       customer1 = create(:customer)
       customer2 = create(:customer)
@@ -265,16 +268,19 @@ describe "Items API" do
       @item3 = create(:item, merchant: merchant2)
       @item4 = create(:item, merchant: merchant2)
 
-      invoice1 = create(:invoice, customer: customer1, merchant: merchant1, updated_at: date_one)
-      invoice2 = create(:invoice, customer: customer1, merchant: merchant1, updated_at: date_one)
-      invoice3 = create(:invoice, customer: customer1, merchant: merchant1, updated_at: date_one)
-      invoice4 = create(:invoice, customer: customer1, merchant: merchant1, updated_at: date_one)
-      invoice5 = create(:invoice, customer: customer2, merchant: merchant2, updated_at: date_one)
-      invoice6 = create(:invoice, customer: customer2, merchant: merchant2, updated_at: date_one)
-      invoice7 = create(:invoice, customer: customer2, merchant: merchant2, updated_at: date_one)
-      invoice8 = create(:invoice, customer: customer2, merchant: merchant2, updated_at: date_one)
+      invoice1 = create(:invoice, customer: customer1, merchant: merchant1, created_at: @date1)
+      invoice2 = create(:invoice, customer: customer1, merchant: merchant1, created_at: @date2)
+      invoice3 = create(:invoice, customer: customer1, merchant: merchant1, created_at: @date1)
+      invoice4 = create(:invoice, customer: customer1, merchant: merchant1, created_at: @date2)
+      invoice5 = create(:invoice, customer: customer2, merchant: merchant2, created_at: @date1)
+      invoice6 = create(:invoice, customer: customer2, merchant: merchant2, created_at: @date1)
+      invoice7 = create(:invoice, customer: customer2, merchant: merchant2, created_at: @date1)
+      invoice8 = create(:invoice, customer: customer2, merchant: merchant2, created_at: @date1)
 
-      invoice10 = create(:invoice, customer: customer2, merchant: merchant2, updated_at: date_one)
+      invoice10 = create(:invoice, customer: customer2, merchant: merchant1, created_at: @date3)
+      invoice11 = create(:invoice, customer: customer2, merchant: merchant1, created_at: @date4)
+
+      invoice12 = create(:invoice, customer: customer2, merchant: merchant2, updated_at: @date3)
 
       invoice_item1 = create(:invoice_item, item: @item1, invoice: invoice1, quantity: 1, unit_price: 100)
       invoice_item2 = create(:invoice_item, item: @item1, invoice: invoice2, quantity: 2, unit_price: 200)
@@ -284,9 +290,11 @@ describe "Items API" do
       invoice_item6 = create(:invoice_item, item: @item3, invoice: invoice6, quantity: 6, unit_price: 600)
       invoice_item7 = create(:invoice_item, item: @item4, invoice: invoice7, quantity: 7, unit_price: 700)
       invoice_item8 = create(:invoice_item, item: @item4, invoice: invoice8, quantity: 8, unit_price: 800)
-      invoice_item9 = create(:invoice_item, item: @item1, invoice: invoice1, quantity: 5, unit_price: 500)
+      invoice_item9 = create(:invoice_item, item: @item1, invoice: invoice1, quantity: 1, unit_price: 100)
+      invoice_item10 = create(:invoice_item, item: @item1, invoice: invoice10, quantity: 2, unit_price: 600)
+      invoice_item11 = create(:invoice_item, item: @item1, invoice: invoice11, quantity: 2, unit_price: 600)
 
-      invoice_item10 = create(:invoice_item, item: @item2, invoice: invoice10, quantity: 100, unit_price: 10000)
+      invoice_item12 = create(:invoice_item, item: @item2, invoice: invoice12, quantity: 100, unit_price: 10000)
 
       transaction1 = create(:transaction, invoice: invoice1, result: "success")
       transaction2 = create(:transaction, invoice: invoice2, result: "success")
@@ -296,8 +304,10 @@ describe "Items API" do
       transaction6 = create(:transaction, invoice: invoice6, result: "success")
       transaction7 = create(:transaction, invoice: invoice7, result: "success")
       transaction8 = create(:transaction, invoice: invoice8, result: "success")
+      transaction10 = create(:transaction, invoice: invoice10, result: "success")
+      transaction11 = create(:transaction, invoice: invoice11, result: "success")
 
-      transaction10 = create(:transaction, invoice: invoice10, result: "failed")
+      transaction12 = create(:transaction, invoice: invoice12, result: "failed")
     end
 
     it "sends the top items ranked by total revenue" do
@@ -328,6 +338,27 @@ describe "Items API" do
       expect(items[0]["attributes"]["name"]).to eq(@item4.name)
       expect(items[1]["attributes"]["name"]).to eq(@item3.name)
       expect(items[2]["attributes"]["name"]).to eq(@item1.name)
+    end
+
+    it "sends the date with the most sales for a given item" do
+      id1 = @item1.id
+      id2 = @item2.id
+
+      get "/api/v1/items/#{id1}/best_day"
+
+      expect(response).to be_successful
+
+      date = JSON.parse(response.body)["data"]["attributes"]["best_day"]
+
+      expect(date).to eq(@date4)
+
+      get "/api/v1/items/#{id2}/best_day"
+
+      expect(response).to be_successful
+
+      date = JSON.parse(response.body)["data"]["attributes"]["best_day"]
+
+      expect(date).to eq(@date2)
     end
   end
 
