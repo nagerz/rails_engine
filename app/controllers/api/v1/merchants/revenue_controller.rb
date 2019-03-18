@@ -5,9 +5,6 @@ class Api::V1::Merchants::RevenueController < ApplicationController
   end
 
   def index
-    # if params[:date]
-    #   date = params[:date]
-    # end
     render json: TotalRevenueSerializer.new(MerchantRevenue.new(params[:date]))
   end
 
